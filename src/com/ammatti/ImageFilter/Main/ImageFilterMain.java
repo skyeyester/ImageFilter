@@ -35,7 +35,7 @@ public class ImageFilterMain extends Activity {
 		
 		imageView= (ImageView) findViewById(R.id.imgfilter);
 		textView = (TextView) findViewById(R.id.runtime);
-		//注：在android系统上，手机图片尺寸尽量控制在480*480范围内,否则在高斯运算时可以造成内存溢出的问题
+		//control image size smaller than 480*480 to avoid memory leak on Gaussian operation
 		Bitmap bitmap = BitmapFactory.decodeResource(ImageFilterMain.this.getResources(), R.drawable.image);
 		imageView.setImageBitmap(bitmap);
 
@@ -43,7 +43,7 @@ public class ImageFilterMain extends Activity {
 	}
 
 	/**
-	 * 加载图片filter
+	 * Load filter
 	 */
 	private void LoadImageFilter() {
 		Gallery gallery = (Gallery) findViewById(R.id.galleryFilter);
@@ -91,14 +91,14 @@ public class ImageFilterMain extends Activity {
 				if (img != null && img.destImage.isRecycled()) {
 					img.destImage.recycle();
 					img.destImage = null;
-					System.gc(); // 提醒系统及时回收
+					System.gc(); // notify system recycle resource
 				}
 			}
 			finally{
 				if (img != null && img.image.isRecycled()) {
 					img.image.recycle();
 					img.image = null;
-					System.gc(); // 提醒系统及时回收
+					System.gc(); // notify system recycle resource
 				}
 			}
 			return null;
@@ -131,7 +131,7 @@ public class ImageFilterMain extends Activity {
 		public ImageFilterAdapter(Context c) {
 			mContext = c;
 			
-			//99种效果
+			//99 kinds for filtering condition
 	         
 	        //v0.4 
 			filterArray.add(new FilterInfo(R.drawable.video_filter1, new VideoFilter(VideoFilter.VIDEO_TYPE.VIDEO_STAGGERED)));
@@ -240,7 +240,7 @@ public class ImageFilterMain extends Activity {
 			filterArray.add(new FilterInfo(R.drawable.xradiation_filter,new XRadiationFilter()));
 			filterArray.add(new FilterInfo(R.drawable.nightvision_filter,new NightVisionFilter()));
 
-			filterArray.add(new FilterInfo(R.drawable.saturationmodity_filter,null/* 此处会生成原图效果 */));
+			filterArray.add(new FilterInfo(R.drawable.saturationmodity_filter,null)); /*Null is original version */
 		}
 
 		public int getCount() {
@@ -266,7 +266,7 @@ public class ImageFilterMain extends Activity {
 			ImageView imageview = new ImageView(mContext);
 			imageview.setImageResource(filterArray.get(position).filterID);
 			imageview.setLayoutParams(new Gallery.LayoutParams(width, height));
-			imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);// 设置显示比例类型
+			imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);// set the scale style
 			return imageview;
 		}
 	};
