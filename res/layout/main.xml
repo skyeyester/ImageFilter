@@ -17,6 +17,16 @@
 			android:spacing="2px" />
 	    
  	</LinearLayout>	
+ 	
+ 	<TextView android:layout_width="fill_parent"
+					android:layout_height="wrap_content" 
+					android:id="@+id/filtername"
+					android:text="Click the Start Filtering"
+					android:singleLine="true"
+			        android:textColor="#666666"
+			        android:textSize="14dip"
+					/>
+ 	
     <TextView android:layout_width="fill_parent"
 					android:layout_height="wrap_content" 
 					android:id="@+id/runtime"

@@ -26,7 +26,8 @@ import android.widget.TextView;
 public class ImageFilterMain extends Activity {
 
 	private ImageView imageView;
-	private TextView textView;
+	private TextView runningAlertView;
+	private TextView filterNameView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -34,9 +35,12 @@ public class ImageFilterMain extends Activity {
 		setContentView(R.layout.main);
 		
 		imageView= (ImageView) findViewById(R.id.imgfilter);
-		textView = (TextView) findViewById(R.id.runtime);
+		runningAlertView = (TextView) findViewById(R.id.runtime);
+		filterNameView = (TextView) findViewById(R.id.filtername);
+		
 		//control image size smaller than 480*480 to avoid memory leak on Gaussian operation
-		Bitmap bitmap = BitmapFactory.decodeResource(ImageFilterMain.this.getResources(), R.drawable.image);
+		//show original image 
+		Bitmap bitmap = BitmapFactory.decodeResource(ImageFilterMain.this.getResources(), R.drawable.finland);
 		imageView.setImageBitmap(bitmap);
 
 		LoadImageFilter();
@@ -72,14 +76,16 @@ public class ImageFilterMain extends Activity {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			textView.setVisibility(View.VISIBLE);
+			runningAlertView.setVisibility(View.VISIBLE);
+			filterNameView.setText(filter.getClass().getSimpleName());
 		}
 
 		public Bitmap doInBackground(Void... params) {
 			Image img = null;
 			try
-	    	{
-				Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.image);
+	    	{   
+				//get source image
+				Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.finland);
 				img = new Image(bitmap);
 				if (filter != null) {
 					img = filter.process(img);
@@ -110,7 +116,7 @@ public class ImageFilterMain extends Activity {
 				super.onPostExecute(result);
 				imageView.setImageBitmap(result);	
 			}
-			textView.setVisibility(View.GONE);
+			runningAlertView.setVisibility(View.GONE);
 		}
 	}
 
