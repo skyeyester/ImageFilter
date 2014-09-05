@@ -1,6 +1,6 @@
 /* 
- * HaoRan ImageFilter Classes v0.1
- * Copyright (C) 2012 Zhenjun Dai
+ * Ammatti ImageFilter Classes v0.1
+ * Copyright (C) 2014 Chien-Cheng Wu
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -20,8 +20,8 @@
 package com.ammatti.ImageFilter;
 
 /**
- * 色采饱和度特效
- * @author daizhj
+ * 
+ * @author skyeyester
  *
  */
 public class SaturationModifyFilter implements IImageFilter{
