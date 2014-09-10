@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+	<item
+        android:id="@+id/action_search"
+        android:title="搜尋"
+        android:icon="@android:drawable/ic_menu_search"
+        android:showAsAction="ifRoom" />
+	<item
+        android:id="@+id/action_save"
+        android:title="另存"
+        android:icon="@android:drawable/ic_menu_save"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/action_settings"/>
+
+</menu>

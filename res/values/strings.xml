@@ -3,5 +3,6 @@
 
     <string name="hello">Hello World!</string>
     <string name="app_name">ImageFilter</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
