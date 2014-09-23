@@ -1,5 +1,9 @@
 package com.ammatti.ImageFilter.Main;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +14,15 @@ import com.ammatti.ImageFilter.R;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +38,11 @@ public class ImageFilterMain extends Activity {
 	private ImageView imageView;
 	private TextView runningAlertView;
 	private TextView filterNameView;
+	private String logTag = "ImageFilterMain";
+	
+	//user chosen file
+	private final int SELECT_PHOTO = 1;
+	protected Uri selectedImageUri;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +52,8 @@ public class ImageFilterMain extends Activity {
 		imageView= (ImageView) findViewById(R.id.imgfilter);
 		runningAlertView = (TextView) findViewById(R.id.runtime);
 		filterNameView = (TextView) findViewById(R.id.filtername);
-		
+		//set default image path
+		selectedImageUri = Uri.parse("android.resource://" + this.getPackageName() + "/"+ R.drawable.finland);
 		//control image size smaller than 480*480 to avoid memory leak on Gaussian operation
 		//show original image 
 		Bitmap bitmap = BitmapFactory.decodeResource(ImageFilterMain.this.getResources(), R.drawable.finland);
@@ -62,11 +76,45 @@ public class ImageFilterMain extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			Log.i(logTag,"Press action_settings");
+			return true;
+		}else if(id == R.id.action_search){
+			Log.i(logTag,"Press action_search");
+			Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+			photoPickerIntent.setType("image/*");
+			startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+			return true;
+		}else if(id == R.id.action_save){
+			Log.i(logTag,"Press action_save");
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
 
+        switch(requestCode) { 
+        case SELECT_PHOTO:
+            if(resultCode == RESULT_OK){
+				try {
+					selectedImageUri = imageReturnedIntent.getData();
+					InputStream imageStream = getContentResolver().openInputStream(selectedImageUri);
+					BitmapFactory.Options options = new BitmapFactory.Options();
+				    options.inPurgeable = true;
+				    options.inInputShareable = true;
+				    //options.inSampleSize = 4;
+					Bitmap selectedImage = BitmapFactory.decodeStream(imageStream,null, options);
+					imageView.setImageBitmap(selectedImage);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+
+            }
+        }
+    }
+	
 	/**
 	 * Load filter
 	 */
@@ -106,7 +154,9 @@ public class ImageFilterMain extends Activity {
 			try
 	    	{   
 				//get source image
-				Bitmap bitmap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.finland);
+				Uri temp = selectedImageUri;
+				InputStream imageStream = getContentResolver().openInputStream(temp);
+				Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
 				img = new Image(bitmap);
 				if (filter != null) {
 					img = filter.process(img);
