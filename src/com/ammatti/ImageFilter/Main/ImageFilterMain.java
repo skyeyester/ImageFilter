@@ -2,7 +2,9 @@ package com.ammatti.ImageFilter.Main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
@@ -43,7 +46,9 @@ public class ImageFilterMain extends Activity {
 	//user chosen file
 	private final int SELECT_PHOTO = 1;
 	protected Uri selectedImageUri;
-
+	//user save file
+	private File dirPath = new File(Environment.getExternalStorageDirectory() + "/DCIM/Camera");
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,6 +91,35 @@ public class ImageFilterMain extends Activity {
 			return true;
 		}else if(id == R.id.action_save){
 			Log.i(logTag,"Press action_save");
+			long start = System.currentTimeMillis();
+			//
+			imageView.setDrawingCacheEnabled(true);
+			Bitmap orgBitmap = imageView.getDrawingCache();
+			if(orgBitmap == null){
+	            Log.i(logTag,"orgBitmap == null");
+				return true;
+	        }
+			String filename = "imagefilter"+start+".jpg";
+			Log.i(logTag,filename);
+			File save = new File(dirPath, filename);
+			FileOutputStream strm;
+			try {
+				strm = new FileOutputStream(save);
+				orgBitmap.compress(CompressFormat.JPEG, 100, strm);
+				Log.i(logTag,"orgBitmap.compress");
+				strm.flush();
+			    strm.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			imageView.setDrawingCacheEnabled(false);
+			//make MediaScannerReceiver refresh and display the new file immediately
+			Uri savedFilePath = Uri.parse("file:///"+save.getAbsolutePath());
+			sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, savedFilePath));  
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
